@@ -1,4 +1,4 @@
-name: Build and Run Docker Container
+name: Docker Build and Push
 
 on:
   push:
@@ -6,19 +6,18 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-      with:
-        repository: deepfence/vectorscan
-        ref: main
 
-    
+    - name: Login to Docker Hub
+      run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
     - name: Build Docker Image
-      run: docker build -t vectorscan-image .
+      run: docker build -t toaeio/toae_postgres_ce:2.0.1 .
 
-    - name: Run Docker Container
-      run: docker run -d --name vectorscan-container vectorscan-image
+    - name: Push Docker Image to Docker Hub
+      run: docker push toaeio/toae_postgres_ce:2.0.1
