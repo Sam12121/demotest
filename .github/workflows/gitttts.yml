@@ -1,33 +1,24 @@
-name: Check New Branches
+name: Build and Run Docker Container
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-  check_branches:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Forked Repository
+    - name: Checkout Repository
       uses: actions/checkout@v2
       with:
-        repository: deepfence/vectorscan  # Use the 'org/repo' format
+        repository: deepfence/vectorscan
+        ref: main
 
-    - name: Fetch Latest Changes
-      run: |
-        git fetch origin
-        git fetch --tags
+    
+    - name: Build Docker Image
+      run: docker build -t vectorscan-image .
 
-    - name: List New Branches
-      run: |
-        git branch -r | grep -v ' -> ' | while read -r branch; do
-          if ! git branch -a | grep -q "$branch"; then
-            echo "New branch: $branch"
-          fi
-        done
-
-    - name: List New Tags
-      run: |
-        git tag -l -n9 | grep -v '^{}$' | while read -r tag; do
-          echo "New tag: $tag"
-        done
+    - name: Run Docker Container
+      run: docker run -d --name vectorscan-container vectorscan-image
