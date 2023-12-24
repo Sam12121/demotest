@@ -1,0 +1,22 @@
+name: Compare Forked Repository
+
+on:
+  workflow_dispatch:
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Forked Repository
+      uses: actions/checkout@v2
+      with:
+        repository: https://github.com/deepfence/vectorscan.git
+
+    - name: Add Upstream Remote
+      run: |
+        git remote add upstream https://github.com/VectorCamp/vectorscan.git
+        git fetch upstream
+
+    - name: Compare Branches
+      run: git diff HEAD upstream/main  # Replace 'main' with the branch you want to compare
