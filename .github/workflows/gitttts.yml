@@ -19,4 +19,7 @@ jobs:
         git fetch upstream
 
     - name: Compare Branches
-      run: git diff HEAD upstream/main  # Replace 'main' with the branch you want to compare
+      run: |
+        git fetch origin  # Fetch latest changes from the forked repository
+        git checkout main  # Replace 'main' with the branch you want to compare
+        git diff origin/main upstream/main  # Compare branches
